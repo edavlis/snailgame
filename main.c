@@ -4,7 +4,8 @@
 #include <time.h>
 #include <string.h>
 
-#define NUMSNAILS 5
+#define NUMSNAILS 15
+#define CLEARSCREEN printf("\e[2;1H\e[2J");
 
 extern const char medal[15][91];
 extern const char loser[8][49];
@@ -27,39 +28,36 @@ typedef struct {
 } snail;
 
 float finishTime(snail snail, int trackLength, int trackType);
-void makeFinishOrder(snail snails[], int finishOrder[5][2], int trackLength, int trackType);
+void makeFinishOrder(snail snails[], int finishOrder[NUMSNAILS][2], int trackLength, int trackType);
 
 int main() {
 	int playAgain = 1;
 	while (playAgain == 1) {	
-		// clear screen
-		printf("\e[1;1H\e[2J");
+		
+		CLEARSCREEN
 
 		// time seed or something i dont understand it
 		srand((time(NULL)));
 
 		// list of premade names for snails
-		char names[40][15] = {"Primous", "Sparsimus", "Variorumus", "Imprimisus", "Primous", "Ultimous", "Gregatimus", "Itemus", "Sparsimus", "Literatimus", "Paceus", "Gratisus", "Tantius", "Ubiqueus", "Sparsimus", "Stillatimus", "Partimus", "Interimus", "Secundumus", "Quaus", "Tantius", "Statimus", "Viceus", "Interimus", "Quatenusus", "Alternatimus", "Videlicetus", "Guttatimus", "Ergous", "Solus", "Circiterus", "Quasius", "Ergous", "Viceus", "Versusite", "Syllabatimusus", "Vulgousus", "Quasius"};
+		char names[38][15] = {"Primous", "Sparsimus", "Variorumus", "Imprimisus", "Primous", "Ultimous", "Gregatimus", "Itemus", "Sparsimus", "Literatimus", "Paceus", "Gratisus", "Tantius", "Ubiqueus", "Sparsimus", "Stillatimus", "Partimus", "Interimus", "Secundumus", "Quaus", "Tantius", "Statimus", "Viceus", "Interimus", "Quatenusus", "Alternatimus", "Videlicetus", "Guttatimus", "Ergous", "Solus", "Circiterus", "Quasius", "Ergous", "Viceus", "Versusite", "Syllabatimusus", "Vulgousus", "Quasius"};
 		
 		// prefix to the snail names. i'm sure there's a better way to do this but this works for now
 		char classification[32] = "Snailus ";
-		// create multiple snails
-		snail snail[5];
-
+		
+		// create multiple snails & value  for name
+		snail snail[NUMSNAILS];
 		int randomNameVal;
 
 		// assign values to snails, probably should make it a function
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < NUMSNAILS; i++) {
 			randomNameVal = (rand() % 38);
 			snail[i].speed = (rand() % 10) + 1;
 			snail[i].luck =  (rand() % 10 + 1);
-			snail[i].chosen = 0;
 			strcpy(snail[i].breed, (strcat(classification, names[randomNameVal % 41])));
 			strcpy(classification, "Snailus ");
-			
 			int trackPerformance = 0;
-
-			snail[i].bestTrackInt = ((rand() % 5) + 1); // MOVE THIS TO THE RANDOM SNAIL GENERATOR...
+			snail[i].bestTrackInt = ((rand() % 5) + 1);
 			if (snail[i].bestTrackInt == 1) {
 				strcpy(snail[i].bestRace, "Sprint");
 			} else if (snail[i].bestTrackInt == 2) {
@@ -71,7 +69,6 @@ int main() {
 			} else if (snail[i].bestTrackInt == 5) {
 				strcpy(snail[i].bestRace, "Marathon");
 			}
-
 		}
 
 		// user decides what track they want (note that this is done BEFORE the snail is chosen.)
@@ -79,7 +76,6 @@ int main() {
 		printf("What track size do you want to run on?\n(1) Sprint, 100m\n(2) Short, 200m\n(3) Medium, 400m\n(4) Long, 1KM\n(5) Marathon, 10KM\nEnter (1-5): ");
 		scanf("%d", &userTrack);
 		int trackType = userTrack;
-
 		
 		// determine track length.
 		switch(userTrack) {
@@ -103,33 +99,26 @@ int main() {
 				userTrack = MARATHON;
 				printf("You have chosen the Marathon!\n");
 				break;
-
 		}
 
-		// clear screen
-		printf("\e[1;1H\e[2J");
+		CLEARSCREEN
 
 		// print out the different snails, user chooses what snail they want
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < NUMSNAILS; i++) {
 			printf("\nSnail %d (%s)\nSpeed: %d/10\nBest race: %s\n",(i + 1), snail[i].breed, snail[i].speed, snail[i].bestRace);
 			sleep(1);
 		}
 
 		int userSnail;
-		printf("\nWhich snail do you want choose? (Enter 1-5): " );
+		printf("\nWhich snail do you want choose? (Enter 1-%d):",NUMSNAILS);
 		scanf("%d", &userSnail);
 		snail[userSnail - 1].chosen = 1;
 
+		CLEARSCREEN
 
-
-		// clear screen
-		printf("\e[1;1H\e[2J");
-
-		printf("You have chosen snail %d!", userSnail);
-		sleep(2);
+		printf("You have chosen snail %d!\n", userSnail);
 		
-		// clear screen
-		printf("\e[1;1H\e[2J");
+		// "wait" for snails to finish racing
 		fflush(stdout);
 		printf("Waiting for snails to finish racing");
 		fflush(stdout);
@@ -150,38 +139,29 @@ int main() {
 		fflush(stdout);
 
 		// calculate finishing times and finishing orders.
-		int finishTimes[5][2];
-		int finishOrders[5][2];
+		int finishTimes[NUMSNAILS][2];
+		int finishOrders[NUMSNAILS][2];
 		makeFinishOrder(snail, finishOrders, userTrack, trackType);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < NUMSNAILS; i++) {
 			finishTimes[i][1] = finishTime(snail[i], userTrack, trackType); } printf("Here are the Finishing Times:\n");
-		for(int i = 0; i < 5; i++) {
+		for(int i = 0; i < NUMSNAILS; i++) {
 			printf("Snail %d:\tTime: %d\n",i+1,finishTimes[i][1]);
 		}
-		for(int i = 1; i <= 5; i++) {
+		for(int i = 1; i <= NUMSNAILS; i++) {
 			finishOrders[i-1][1] = i;
 		}
 
-		/* /// print out finishing statment
-		printf("\n\nHere are the Finishing Places:\n");
-		for(int i = 0; i < 5; i++) {
-			printf("Snail %d:\tTime: %d\n",(finishOrders[i][0]),finishOrders[i][1]);
-		}
-		*/
-
 		int place;
-		for(int i = 0; i < 5; i++) {
+		for(int i = 0; i < NUMSNAILS; i++) {
 			if (finishOrders[i][0] == (userSnail)) {	
 				place = finishOrders[i][1];
 				break;
 			}
 		}
-		
-
 
 		switch (place) {
 			case 1:
-				for(int i = 0; i < 15; i++){
+				for(int i = 0; i < 15; i++) {
 					printf("%s\t%s\t%s\n", medal[i], medal[i], medal[i]);
 				}
 				printf("\n\n\nYou came first! Well done!\n");
@@ -205,7 +185,7 @@ int main() {
 				for(int i = 0; i < 8; i++){
 					printf("%s\n",loser[i]);
 				}
-				printf("\n\n\nYou came Fourth. At least you're not last place!\n");
+				printf("\n\n\nYou came Fourth.One place away from the podium!\n");
 				break;
 			
 			case 5:
@@ -213,17 +193,13 @@ int main() {
 				for(int i = 0; i < 15; i++){
 					printf("%s\n",loser[i]);
 				}
-				printf("\n\n\nYou came Fifth.You can only go up from here!\n");
+				printf("\n\n\nYou came %d.You can only go up from here!\n",place);
 				break;
 
 		};
-
-
 		printf("\nDo you want to play again?\n(1) Yes\n(0) No\n");
 		scanf("%d", &playAgain);
 	}
-
-
 
 }
 
@@ -236,25 +212,22 @@ float finishTime(snail snail, int trackLength, int trackType) {
 		} else if ((trackType == snail.bestTrackInt + 2) || (trackType == snail.bestTrackInt - 2)) {
 			trackPerformance = 0.25;
 		}
-
 	int performance = (rand() % 10 );
 	return trackLength / (trackPerformance * snail.speed * snail.luck);
 }
 
-void makeFinishOrder(snail snails[], int finishOrder[5][2], int trackLength, int trackType) {
-    for (int i = 0; i < 5; i++) {
+void makeFinishOrder(snail snails[], int finishOrder[NUMSNAILS][2], int trackLength, int trackType) {
+    for (int i = 0; i < NUMSNAILS; i++) {
         finishOrder[i][0] = i + 1;
         finishOrder[i][1] = finishTime(snails[i], trackLength, trackType);
     }
-
     // basic bubble sort
-    for (int i = 0; i < 5; i++) {
-        for (int j = i + 1; j < 5; j++) {
+    for (int i = 0; i < NUMSNAILS; i++) {
+        for (int j = i + 1; j < NUMSNAILS; j++) {
             if (finishOrder[i][1] > finishOrder[j][1]) {
                 int tempTime = finishOrder[i][1];
                 finishOrder[i][1] = finishOrder[j][1];
                 finishOrder[j][1] = tempTime;
-
                 int tempSnail = finishOrder[i][0];
                 finishOrder[i][0] = finishOrder[j][0];
                 finishOrder[j][0] = tempSnail;
