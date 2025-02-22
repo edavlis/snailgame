@@ -40,7 +40,9 @@ int main() {
 		srand((time(NULL)));
 
 		// list of premade names for snails
-		char names[38][15] = {"Primous", "Sparsimus", "Variorumus", "Imprimisus", "Primous", "Ultimous", "Gregatimus", "Itemus", "Sparsimus", "Literatimus", "Paceus", "Gratisus", "Tantius", "Ubiqueus", "Sparsimus", "Stillatimus", "Partimus", "Interimus", "Secundumus", "Quaus", "Tantius", "Statimus", "Viceus", "Interimus", "Quatenusus", "Alternatimus", "Videlicetus", "Guttatimus", "Ergous", "Solus", "Circiterus", "Quasius", "Ergous", "Viceus", "Versusite", "Syllabatimusus", "Vulgousus", "Quasius"};
+		char names[38][15] = {"Primous", "Sparsimus", "Variorumus", "Imprimisus", "Primous", "Ultimous", "Gregatimus", "Itemus", "Sparsimus", "Literatimus", "Paceus", "Gratisus",
+		"Tantius", "Ubiqueus", "Sparsimus", "Stillatimus", "Partimus", "Interimus", "Secundumus", "Quaus", "Tantius", "Statimus", "Viceus", "Interimus", "Quatenusus", "Alternatimus", "Videlicetus", "Guttatimus",
+		"Ergous", "Solus", "Circiterus", "Quasius", "Ergous", "Viceus", "Versusite", "Syllabatimusus", "Vulgousus", "Quasius"};
 		
 		// prefix to the snail names. i'm sure there's a better way to do this but this works for now
 		char classification[32] = "Snailus ";
